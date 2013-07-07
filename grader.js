@@ -32,8 +32,8 @@ var CHECKSFILE_DEFAULT = "checks.json";
 var assertFileExists = function(infile) {
     var instr = infile.toString();
     if(!fs.existsSync(instr)) {
-	console.log("%s does not exist. Exiting.", instr);
-	process.exit(1); // http://nodejs.org/api/process.html#process_process_exit_code
+      console.log("%s does not exist. Exiting.", instr);
+      process.exit(1); // http://nodejs.org/api/process.html#process_process_exit_code
     }
     return instr;
 };
@@ -51,8 +51,8 @@ var checkHtmlFile = function(htmlfile, checksfile) {
     var checks = loadChecks(checksfile).sort();
     var out = {};
     for(var ii in checks) {
-	var present = $(checks[ii]).length > 0;
-	out[checks[ii]] = present;
+      var present = $(checks[ii]).length > 0;
+      out[checks[ii]] = present;
     }
     return out;
 };
@@ -70,27 +70,29 @@ var checkIt = function(file, checkfile) {
 };
 
 if(require.main == module) {
-    program
-	.option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-	.option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-	.option('-u, --url <website_url>', 'Path to webpage')
-	.parse(process.argv);
+  program
+    .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
+    .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+    .option('-u, --url <website_url>', 'Path to webpage')
+    .parse(process.argv);
 
     var file = program.file;
+
     if(program.url) {
-	file = "/tmp/graderdownloadedfile";
-	rest.get(program.url).on('complete', function(result) {
-	    fs.writeFile(file, result, function(err) {
-		if(err) {
-		    console.log(err);
-		} else {
-		    checkIt(file, program.checks);
-		}
-	    });
-	});
+      file = "/tmp/graderdownloadedfile";
+      rest.get(program.url).on('complete', function(result) {
+        fs.writeFile(file, result, function(err) {
+          if(err) {
+            console.log(err);
+          } else {
+            checkIt(file, program.checks);
+          }
+        });
+      });
     } else {
-	checkIt(file, program.checks);
+      checkIt(file, program.checks);
     }
+
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
